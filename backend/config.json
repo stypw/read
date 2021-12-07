@@ -1,4 +1,0 @@
-{
-    "mysql":"root:admin@123456@/enroll?charset=utf8&parseTime=true",
-    "listen":":8080"
-}

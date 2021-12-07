@@ -11,11 +11,7 @@ import (
 	"io/ioutil"
 
 	JSON "rest/json"
-
-	router "rest/router"
 )
-
-var routers map[string]*router.Router = make(map[string]*router.Router)
 
 func main() {
 
@@ -31,29 +27,19 @@ func main() {
 		return
 	}
 
-	mysql, y := obj["mysql"]
-	if !y {
+	mysql := JSON.GetString(JSON.GetProperty(obj, "mysql"))
+	if mysql == "" {
 		fmt.Println("config error,have not mysql field!")
 		return
 	}
-	mysqlString, _ := JSON.AsString(mysql)
-	if mysqlString == "" {
-		fmt.Println("config field mysql is empty")
-		return
-	}
 
-	listen, y := obj["listen"]
-	if !y {
+	listen := JSON.GetString(JSON.GetProperty(obj, "listen"))
+	if listen == "" {
 		fmt.Println("config error,have not listen field!")
 		return
 	}
-	listenString, _ := JSON.AsString(listen)
-	if listenString == "" {
-		fmt.Println("config field listen is empty")
-		return
-	}
 
-	db, err := sql.Open("mysql", mysqlString)
+	db, err := sql.Open("mysql", mysql)
 	if err != nil {
 		fmt.Println(err)
 		return
@@ -62,13 +48,21 @@ func main() {
 	db.SetConnMaxLifetime(time.Minute * 3)
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
+
+	globalDb = db
+
 	defer db.Close()
 
 	for _, rt := range routers {
 		rt.Start(db)
 	}
+	for _, ls := range listeners {
+		for _, p := range ls.patterns {
+			http.HandleFunc(p, ls.handle)
+		}
+	}
 
-	http.ListenAndServe(listenString, nil)
+	http.ListenAndServe(listen, nil)
 
 	fmt.Println("Read Server Exited!")
 }

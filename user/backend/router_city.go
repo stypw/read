@@ -7,7 +7,7 @@ import (
 var cityRouter = router.Router{
 	Pattern: "/api/city",
 	Table:   "tb_city",
-	Before:  auth,
+	Before:  isAuth,
 }
 
 func init() {
