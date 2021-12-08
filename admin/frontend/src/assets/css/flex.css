@@ -1,0 +1,196 @@
+
+/*********************************************
+
+************************简单说明**************************************
+*横向排列fl-hor,垂直排列fl-ver
+*
+*横向左对齐 fl-left = fl-hor-left = fl-hor-start
+*横向右对齐 fl-right = fl-hor-right = fl-hor-end
+*
+*垂直顶部对齐 fl-top = fl-ver-top = fl-ver-start
+*垂直底部对齐 fl-bottom = fl-ver-bottom = fl-ver-end
+*
+*同时设置 垂直顶部对齐+横向左对齐 fl-start = fl-left + fl-top
+*
+*同时设置 垂直底部对齐+横向右对齐 fl-end = fl-right + fl-bottom
+*
+*同时设置 垂直居中+横向居中 fl-center = fl-hor-center + fl-ver-center
+*
+*示例
+*横向排列，横向左对齐，垂直居中class="fl-hor fl-left fl-ver-center" | class="fl-hor fl-hor-start fl-ver-center" | class="fl-hor fl-hor-left fl-ver-center"
+*垂直排列，横向左对齐，垂直顶部对齐class="fl-ver fl-start" | class="fl-ver fl-left fl-top" | class="fl-ver fl-hor-start fl-ver-start" | class="fl-ver fl-hor-left fl-ver-top"
+*横向排列，上下左右都居中 class="fl-hor fl-center" | class="fl-hor fl-hor-center fl-ver-center"
+
+********************************详细说明***************************************************
+*
+*申明类
+*fl-hor申明此元素为flex横向布局容器,flex-ver申明元素为组向布局容器,两者只能同时用一个,且必须有一个,多个使用fl-ver覆盖fl-hor
+*
+*说明:
+*around(等距)说明：子元素与容器两边有间距,子元素与子元素有间距,所有间距相等,须在所有子元素缩放(zoom)为0的情况下有效,详见flex布局space-around
+*between(两端对齐):子元素与容器两边无间距,子元素与子元素有间距,子元素间间距相等,须在所有子元素缩放(zoom)为0的情况下有效,详见flex布局space-around
+*stretch(铺满):子元素铺面，相当于横向时子元素width:100%(无视子元素的宽度设置),纵向时子元素height:100%(无视子元素的高度设置),详见flex布局stretch
+*
+*布局效果类(定义容器内子元素的排列方式，必须与申明类同时使用才有效果):
+*子元素横向排列方式 .fl-hor-(left,center,right,around,between,around,stretch)分别为(左对齐，居中,右对齐,等距,两端对齐,铺满)
+*子元素纵向排列方式 .fl-ver-(top,center,bottom,around,between,around,stretch)分别为(顶对齐，居中,底对齐,等距,两端对齐,铺满)
+*
+*特殊定义
+*fl-left,fl-right,fl-top,fl-bottom有明确方向,对应fl-hor-left(fl-hor-start),fl-hor-right(fl-hor-end),fl-ver-top(fl-ver-start),fl-ver-bottom(fl-ver-end)
+*当省略hor,ver时，同时定义两轴上的方向，如fl-start=fl-hor-start fl-ver-start，同理有fl-center,fl-end,fl-around,fl-between,fl-stretch，注意fl-top,fl-right,fl-top,fl-bottom有明确方向，不能同时定义两轴，具体见上一条
+*
+*子元素大小 缩放
+*运用在子元素上的类 父元素必须为.fl-hor或.fl-ver
+*.fl-zoom-(0...6) 子元素占用剩余空间的比例,如两个子元素,class="fl-zoom-1",class="fl-zoom-2",则将容器剩余空间等分3份，子元素按比例占据
+*注意,只要有任意一以上的子元素zoom不为0，则父元素定义的所有排列方式等价,因zoom不为0的子元素按比例占满容器剩余空间,导致所有间距为0
+*
+*子元素排序
+*可通过style.order控制子元素在ui上的呈现顺序,如div[1].order=2,div[2].order=1,则在ui上,div[2]将呈现在div[1]前面,如果order相等,则默认按元素顺序排序
+*
+*fl-reverse(倒序)
+*为容器类加上fl-reverse将子元素倒序排序,如class="fl-hor fl-reverse"
+*
+*fl-stack说明(栈容器)
+*当容器元素有指定的宽(fl-hor)高(fl-ver)时,附加上fl-stack(class="fl-hor fl-stack"),将容器变更为栈式,当子元素的总长度超过容器时,自动将子元素换行排列(容器元素默认不换行)
+*
+***********************************************/
+
+.fl-hor{display: flex;flex-direction: row;flex-wrap: nowrap;}
+.fl-hor.fl-reverse{flex-direction: row-reverse;}
+
+.fl-ver{display: flex;flex-direction: column;flex-wrap: nowrap;}
+.fl-ver.fl-reverse{flex-direction: column-reverse;}
+
+.fl-hor.fl-stack,.fl-ver.fl-stack{flex-wrap: wrap;}
+
+.fl-hor.fl-start{justify-content: flex-start;align-content: flex-start;align-items: flex-start;}
+.fl-hor.fl-center{justify-content: center;align-content: center;align-items: center;}
+.fl-hor.fl-end{justify-content: flex-end;align-content:  flex-end;align-items:  flex-end;}
+.fl-hor.fl-around{justify-content: space-around;align-content: stretch;align-items: stretch;}
+.fl-hor.fl-between{justify-content: space-between;align-content: stretch;align-items: stretch;}
+.fl-hor.fl-stretch{justify-content: stretch;align-content: stretch;align-items: stretch;}
+
+.fl-hor.fl-hor-start,.fl-hor.fl-hor-left,.fl-hor.fl-left{justify-content: flex-start;}
+.fl-hor.fl-hor-center{justify-content: center;}
+.fl-hor.fl-hor-end,.fl-hor.fl-hor-right,.fl-hor.fl-right{justify-content: flex-end;}
+.fl-hor.fl-hor-around{justify-content: space-around;}
+.fl-hor.fl-hor-between{justify-content: space-between;}
+.fl-hor.fl-hor-stretch{justify-content: stretch;}
+
+.fl-hor.fl-ver-start,.fl-hor.fl-ver-top,.fl-hor.fl-top{align-items: flex-start;align-content: flex-start;}
+.fl-hor.fl-ver-center{align-items: center;align-content: center;}
+.fl-hor.fl-ver-end,.fl-hor.fl-ver-bottom,.fl-hor.fl-bottom{align-items: flex-end;align-content: flex-end;}
+.fl-hor.fl-ver-around{align-items: streatch;align-content: space-around;}
+.fl-hor.fl-ver-between{align-items: stretch;align-content: space-around;}
+.fl-hor.fl-ver-stretch{align-items: stretch;align-content:stretch;}
+
+.fl-ver.fl-start{justify-content: flex-start;align-content: flex-start;align-items: flex-start;}
+.fl-ver.fl-center{justify-content: center;align-content: center;align-items: center;}
+.fl-ver.fl-end{justify-content: flex-end;align-content:  flex-end;align-items:  flex-end;}
+.fl-ver.fl-around{justify-content: space-around;align-content: space-around;align-items: stretch;}
+.fl-ver.fl-between{justify-content: space-between;align-content: space-between;align-items: stretch;}
+.fl-ver.fl-stretch{justify-content: stretch;align-content: stretch;align-items: stretch;}
+
+.fl-ver.fl-hor-start,.fl-ver.fl-hor-left,.fl-ver.fl-left{align-content: flex-start;align-items: flex-start;}
+.fl-ver.fl-hor-center{align-content: center;align-items: center;}
+.fl-ver.fl-hor-end,.fl-ver.fl-hor-right,.fl-ver.fl-right{align-content: flex-end;align-items: flex-end;}
+.fl-ver.fl-hor-around{align-content: space-around;align-items: stretch;}
+.fl-ver.fl-hor-between{align-content: space-between;align-items: stretch;}
+.fl-ver.fl-hor-stretch{align-content: stretch;align-items: stretch;}
+
+.fl-ver.fl-ver-start,.fl-ver.fl-ver-top,.fl-ver.fl-top{justify-content: flex-start;}
+.fl-ver.fl-ver-center{justify-content: center;}
+.fl-ver.fl-ver-end,.fl-ver.fl-ver-bottom,.fl-ver.fl-bottom{justify-content: flex-end;}
+.fl-ver.fl-ver-between{justify-content: space-between;}
+.fl-ver.fl-ver-around{justify-content: space-around;}
+.fl-ver.fl-ver-stretch{justify-content: stretch;}
+
+.fl-hor>.fl-zoom-0{flex-shrink: 0;flex-grow: 0;}
+.fl-hor>.fl-zoom-1{flex-shrink: 1;flex-grow: 1;width: 1px;}
+.fl-hor>.fl-zoom-2{flex-shrink: 2;flex-grow: 2;width: 1px;}
+.fl-hor>.fl-zoom-3{flex-shrink: 3;flex-grow: 3;width: 1px;}
+.fl-hor>.fl-zoom-4{flex-shrink: 4;flex-grow: 4;width: 1px;}
+.fl-hor>.fl-zoom-5{flex-shrink: 5;flex-grow: 5;width: 1px;}
+.fl-hor>.fl-zoom-6{flex-shrink: 6;flex-grow: 6;width: 1px;}
+
+.fl-ver>.fl-zoom-0{flex-shrink: 0;flex-grow: 0;}
+.fl-ver>.fl-zoom-1{flex-shrink: 1;flex-grow: 1;height: 1px;}
+.fl-ver>.fl-zoom-2{flex-shrink: 2;flex-grow: 2;height: 1px;}
+.fl-ver>.fl-zoom-3{flex-shrink: 3;flex-grow: 3;height: 1px;}
+.fl-ver>.fl-zoom-4{flex-shrink: 4;flex-grow: 4;height: 1px;}
+.fl-ver>.fl-zoom-5{flex-shrink: 5;flex-grow: 5;height: 1px;}
+.fl-ver>.fl-zoom-6{flex-shrink: 6;flex-grow: 6;height: 1px;}
+
+.wd-full{width:100%;}
+.wd-half{width: 50%;}
+.wd-quarter{width:25%;}
+
+.ht-full{height:100%;}
+.ht-half{height: 50%;}
+.ht-quarter{height:25%;}
+
+.gap-0 {gap: 0px;}
+.gap-1 {gap: 1px;}
+.gap-2 {gap: 2px;}
+.gap-3 {gap: 3px;}
+.gap-4 {gap: 4px;}
+.gap-5 {gap: 5px;}
+.gap-6 {gap: 6px;}
+.gap-7 {gap: 7px;}
+.gap-8 {gap: 8px;}
+.gap-9 {gap: 9px;}
+.gap-10{gap:10px;}
+.gap-11{gap:11px;}
+.gap-12{gap:12px;}
+.gap-13{gap:13px;}
+.gap-14{gap:14px;}
+.gap-15{gap:15px;}
+.gap-16{gap:16px;}
+.gap-17{gap:17px;}
+.gap-18{gap:18px;}
+.gap-19{gap:19px;}
+.gap-20{gap:20px;}
+
+.column-gap-0 ,.col-gap-0 {column-gap: 0px;}
+.column-gap-1 ,.col-gap-1 {column-gap: 1px;}
+.column-gap-2 ,.col-gap-2 {column-gap: 2px;}
+.column-gap-3 ,.col-gap-3 {column-gap: 3px;}
+.column-gap-4 ,.col-gap-4 {column-gap: 4px;}
+.column-gap-5 ,.col-gap-5 {column-gap: 5px;}
+.column-gap-6 ,.col-gap-6 {column-gap: 6px;}
+.column-gap-7 ,.col-gap-7 {column-gap: 7px;}
+.column-gap-8 ,.col-gap-8 {column-gap: 8px;}
+.column-gap-9 ,.col-gap-9 {column-gap: 9px;}
+.column-gap-10,.col-gap-10{column-gap:10px;}
+.column-gap-11,.col-gap-11{column-gap:11px;}
+.column-gap-12,.col-gap-12{column-gap:12px;}
+.column-gap-13,.col-gap-13{column-gap:13px;}
+.column-gap-14,.col-gap-14{column-gap:14px;}
+.column-gap-15,.col-gap-15{column-gap:15px;}
+.column-gap-16,.col-gap-16{column-gap:16px;}
+.column-gap-17,.col-gap-17{column-gap:17px;}
+.column-gap-18,.col-gap-18{column-gap:18px;}
+.column-gap-19,.col-gap-19{column-gap:19px;}
+.column-gap-20,.col-gap-20{column-gap:20px;}
+
+.gap-0 {row-gap: 0px;}
+.gap-1 {row-gap: 1px;}
+.gap-2 {row-gap: 2px;}
+.gap-3 {row-gap: 3px;}
+.gap-4 {row-gap: 4px;}
+.gap-5 {row-gap: 5px;}
+.gap-6 {row-gap: 6px;}
+.gap-7 {row-gap: 7px;}
+.gap-8 {row-gap: 8px;}
+.gap-9 {row-gap: 9px;}
+.gap-10{row-gap:10px;}
+.gap-11{row-gap:11px;}
+.gap-12{row-gap:12px;}
+.gap-13{row-gap:13px;}
+.gap-14{row-gap:14px;}
+.gap-15{row-gap:15px;}
+.gap-16{row-gap:16px;}
+.gap-17{row-gap:17px;}
+.gap-18{row-gap:18px;}
+.gap-19{row-gap:19px;}
+.gap-20{row-gap:20px;}

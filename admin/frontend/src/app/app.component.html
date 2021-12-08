@@ -1,0 +1,44 @@
+<div class="header fl-hor">
+  <div style="width: 270px;"></div>
+  <div class="fl-zoom-1" ></div>
+  <div style="width: 270px;padding-right: 24px;" class="fl-hor fl-right fl-center" >
+    <a style="color: white;text-decoration: none;" href="https://github.com/stypw/xl" target="__blank">
+      <span class="fl-hor fl-center">
+        <img style="width:32px;height:32px;" src="assets/images/github-circle-white-transparent.svg" />
+        <span>&nbsp;GitHub</span>
+      </span>
+    </a>
+  </div>
+</div>
+<div class="main fl-hor">
+  <div class="left">
+    <a class="menu-item fl-hor fl-left fl-ver-center" *ngFor="let m of menus;" [routerLink]="m.url"
+      routerLinkActive="actived">{{m.text}}</a>
+  </div>
+  <div class="content fl-ver">
+
+    <div class="fl-zoom-0 menu-title-area">
+      <a class="menu-title fl-hor fl-left fl-ver-center" *ngFor="let m of menus;" [routerLink]="m.url"
+        routerLinkActive="actived">{{m.text}}</a>
+    </div>
+    <div class="fl-zoom-1 wd-full">
+      <div class="wd-full ht-full" style="overflow: auto;padding:10px;">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+<div class="footer fl-hor fl-hor-between fl-ver-center hor-gap-10">
+  <a class="fl-hor fl-center" target="_blank"
+    href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=52010302002539">
+    <img src="assets/images/beian.png" />
+    <ng-container>贵公网安备 52010302002539号</ng-container>
+  </a>
+
+  <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener">
+    <ng-container>黔ICP备2021009832号-1</ng-container>
+  </a>
+  <span class="author">联系作者：stypw@outlook.com</span>
+</div>
