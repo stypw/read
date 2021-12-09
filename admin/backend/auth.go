@@ -35,7 +35,7 @@ func isAuth(w http.ResponseWriter, req *http.Request) (int, JSON.Value, error) {
 	return 0, nil, nil
 }
 
-func auth(w http.ResponseWriter, req *http.Request) (int, JSON.Value, error) {
+func doLogin(w http.ResponseWriter, req *http.Request) (int, JSON.Value, error) {
 	body, err := JSON.FromStream(req.Body)
 
 	if err != nil || body == nil {
@@ -64,15 +64,48 @@ func auth(w http.ResponseWriter, req *http.Request) (int, JSON.Value, error) {
 
 	accSha512 := toSha512String(acc)
 	users[accSha512] = &user{acc: acc, nickname: JSON.GetString(JSON.GetProperty(item, "nickname"))}
-
+	http.SetCookie(w, &http.Cookie{Name: cookieKey, Value: accSha512})
 	return 0, JSON.Object{
 		"acc":      JSON.String(acc),
 		"nickname": JSON.GetProperty(item, "nickname"),
 	}, nil
 }
 
-func authHandle(w http.ResponseWriter, req *http.Request) {
-	code, ret, err := auth(w, req)
+func login(w http.ResponseWriter, req *http.Request) {
+	code, ret, err := doLogin(w, req)
+	var responseData JSON.Object = make(JSON.Object)
+
+	responseData["code"] = JSON.Number(float64(code))
+	if err != nil {
+		responseData["error"] = JSON.String(err.Error())
+	} else {
+		responseData["data"] = ret
+	}
+	w.Write([]byte(responseData.ToString()))
+}
+
+func doAuth(w http.ResponseWriter, req *http.Request) (int, JSON.Value, error) {
+	ck, err := req.Cookie(cookieKey)
+	if err != nil {
+		return 1, nil, errors.New("cookie错误，请设置浏览器应许cookie")
+	}
+	if ck == nil {
+		return 2, nil, errors.New("未登录")
+	}
+
+	user := users[ck.Value]
+	if user == nil {
+		return 2, nil, errors.New("未登录")
+	}
+
+	return 0, JSON.Object{
+		"acc":      JSON.String(user.acc),
+		"nickname": JSON.String(user.nickname),
+	}, nil
+}
+
+func auth(w http.ResponseWriter, req *http.Request) {
+	code, ret, err := doAuth(w, req)
 	var responseData JSON.Object = make(JSON.Object)
 
 	responseData["code"] = JSON.Number(float64(code))
@@ -85,5 +118,6 @@ func authHandle(w http.ResponseWriter, req *http.Request) {
 }
 
 func init() {
-	listeners["auth"] = &listener{patterns: []string{"/api/auth", "/api/auth/"}, handle: authHandle}
+	listeners["login"] = &listener{patterns: []string{"/api/login", "/api/login/"}, handle: login}
+	listeners["auth"] = &listener{patterns: []string{"/api/auth", "/api/auth/"}, handle: auth}
 }
